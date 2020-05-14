@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:shophere/models/products.dart';
-import 'package:shophere/widgets/product_item.dart';
+
+import 'package:shophere/widgets/product_grid.dart';
+
+enum FilterOptions { Favourites, All }
 
 class ProductOverViewScreen extends StatefulWidget {
   @override
@@ -8,26 +10,38 @@ class ProductOverViewScreen extends StatefulWidget {
 }
 
 class _ProductOverViewScreenState extends State<ProductOverViewScreen> {
-  Products prod = new Products();
+  bool showFavourite = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Shop here"),
+        actions: <Widget>[
+          PopupMenuButton(
+            icon: Icon(Icons.more_vert),
+            onSelected: (FilterOptions selectedoption) {
+              setState(() {
+                if (selectedoption == FilterOptions.Favourites) {
+                  showFavourite = true;
+                } else {
+                  showFavourite = false;
+                }
+              });
+            },
+            itemBuilder: (_) => [
+              PopupMenuItem(
+                child: Text("Show Favourites"),
+                value: FilterOptions.Favourites,
+              ),
+              PopupMenuItem(
+                child: Text("All"),
+                value: FilterOptions.All,
+              )
+            ],
+          )
+        ],
       ),
-      body: GridView.builder(
-        itemCount: prod.items.length,
-        padding: EdgeInsets.all(10.0),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            mainAxisSpacing: 10,
-            crossAxisSpacing: 10,
-            childAspectRatio: 3 / 2),
-        itemBuilder: (ctx, index) => ProductItem(
-          prod.items[index].title,
-          prod.items[index].imageURL,
-        ),
-      ),
+      body: ProductGrid(),
     );
   }
 }

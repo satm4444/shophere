@@ -1,25 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shophere/models/product.dart';
 
 class ProductItem extends StatelessWidget {
-  final String title;
-  final String image;
-
-  const ProductItem(this.title, this.image);
   @override
   Widget build(BuildContext context) {
+    final loadedProduct = Provider.of<Product>(context);
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
       child: GridTile(
-        child: Image.network(image),
+        child: InkWell(
+            onTap: () {
+              Navigator.pushNamed(context, "/product_detail",
+                  arguments: loadedProduct.id);
+            },
+            child: Image.network(loadedProduct.imageURL)),
         footer: GridTileBar(
           backgroundColor: Colors.black26,
           title: Text(
-            title,
+            loadedProduct.title,
             textAlign: TextAlign.center,
           ),
           leading: IconButton(
-            icon: Icon(Icons.favorite),
-            onPressed: () {},
+            icon: Icon(loadedProduct.isFavourite
+                ? Icons.favorite
+                : Icons.favorite_border),
+            onPressed: () {
+              loadedProduct.toggleisFavourite();
+            },
           ),
           trailing: IconButton(
             icon: Icon(Icons.shopping_cart),
